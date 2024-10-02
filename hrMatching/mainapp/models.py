@@ -67,8 +67,6 @@ class Employee(models.Model):
     skills = models.TextField("Skills", max_length=1000)
     references = models.TextField("References", max_length=1000, null=True, blank=True)
     other = models.TextField("Other", max_length=1000, null=True, blank=True)
-    cluster = models.IntegerField("Cluster", null=True, blank=True)
-    clusterable_text = models.TextField("Clusterable Text", null=True, blank=True)
 
     def __str__(self):
         """String for representing the Employee object (in Admin site etc.)."""
@@ -96,8 +94,6 @@ class Employee(models.Model):
         for field in self._meta.fields:
             if field.verbose_name not in [
                 "user",
-                "Clusterable Text",
-                "Cluster",
                 "Date Of Birth",
             ]:
                 val = field.value_from_object(self)
@@ -161,9 +157,7 @@ class Job_Post(models.Model):
     contact = models.CharField("Contact", max_length=50)
     city = models.CharField("City", max_length=50)
     salary = models.CharField("Salary", max_length=50)
-    cluster = models.IntegerField("Cluster", null=True, blank=True)
-    added_date = models.DateField("Added on", auto_now_add=True)
-    clusterable_text = models.TextField("Clusterable Text", null=True, blank=True)
+    addedDate = models.DateField("Added on", auto_now_add=True)
 
     class Meta:
         verbose_name = "Job Post"
@@ -181,12 +175,7 @@ class Job_Post(models.Model):
         """return fields (name,value) we want to show in Job Post detail page"""
         fields = []
         for field in self._meta.fields:
-            if field.verbose_name not in [
-                "job id",
-                "company",
-                "Clusterable Text",
-                "Cluster",
-            ]:
+            if field.verbose_name not in ["job id", "company"]:
                 val = field.value_from_object(self)
                 if val is None:
                     val = ""
@@ -198,3 +187,18 @@ class Job_Post(models.Model):
                 info = ("Company", company_obj)
                 fields.append(info)
         return fields
+
+
+class Employee_Cluster(models.Model):
+    employee = models.OneToOneField(
+        Employee, on_delete=models.CASCADE, primary_key=True
+    )
+    cluster = models.IntegerField("Cluster", null=True, blank=True)
+    clusterable_text = models.TextField("Clusterable Text", null=True, blank=True)
+
+
+class JobPost_Cluster(models.Model):
+    jobpost = models.OneToOneField(Job_Post, on_delete=models.CASCADE, primary_key=True)
+    cluster = models.IntegerField("Cluster", null=True, blank=True)
+    clusterable_text = models.TextField("Clusterable Text", null=True, blank=True)
+

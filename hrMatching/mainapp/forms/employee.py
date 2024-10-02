@@ -102,7 +102,7 @@ class EmployeeBaseForm(forms.ModelForm):
 
     def clean_phone(self):
         data = self.cleaned_data["phone"]
-        msg = 'Phone number can only contain digits, hyphens, and plus signs.'
+        msg = "Phone number can only contain digits, hyphens, and plus signs."
         for char in data:
             if not char.isdigit() and char not in "-+":
                 raise ValidationError(msg)
@@ -118,9 +118,7 @@ class EmployeeBaseForm(forms.ModelForm):
         if data > today:
             raise ValidationError("Date of birth cannot be in the future.")
         if age < 16:
-            raise ValidationError(
-                "You must be at least 16 years old to register."
-            )
+            raise ValidationError("You must be at least 16 years old to register.")
         if age > 80:
             raise ValidationError("Sorry you must be under 80.")
         return data
@@ -202,7 +200,7 @@ class EmployeeSignUpForm(CustomUserCreationForm, EmployeeBaseForm):
         user.is_employee = True
         user.is_company = False
         user.save()
-        Employee.objects.create(
+        employee = Employee.objects.create(
             user=user,
             firstname=self.cleaned_data["firstname"],
             lastname=self.cleaned_data["lastname"],
@@ -218,6 +216,7 @@ class EmployeeSignUpForm(CustomUserCreationForm, EmployeeBaseForm):
             references=self.cleaned_data["references"],
             other=self.cleaned_data["other"],
         )
+        employee.save()
         return user
 
 
